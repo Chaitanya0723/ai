@@ -1,0 +1,57 @@
+public class BookController {
+    // List to hold books
+    public List<Book__c> books { get; set; }
+    // Variable to hold new book information
+    public Book__c newBook { get; set; }
+
+    // Constructor to fetch existing books from Salesforce
+    public BookController() {
+        books = [SELECT Id, Title__c, Author__c, Publication_Year__c FROM Book__c LIMIT 10];
+        newBook = new Book__c(); // Initialize the new book object
+    }
+
+    // Method to save a new book
+    public PageReference saveBook() {
+        insert newBook; // Insert the new book into Salesforce
+        books.add(newBook); // Add the new book to the list of books
+        newBook = new Book__c(); // Reset the form for the next input
+        return null; // Stay on the same page
+    }
+
+    // Method to update book details
+    public PageReference updateBook() {
+        update books; // Update all books in Salesforce
+        return null; // Stay on the same page
+    }
+}
+
+#APEX CODE
+
+<apex:page controller="BookController">
+    <apex:form>
+        <!-- Form to create a new book -->
+        <apex:pageBlock title="Create New Book">
+            <apex:pageBlockSection columns="2">
+                <!-- Input fields for book title, author, and publication year -->
+                <apex:inputField value="{!newBook.Title__c}" label="Book Title"/>
+                <apex:inputField value="{!newBook.Author__c}" label="Author"/>
+                <apex:inputField value="{!newBook.Publication_Year__c}" label="Publication Year"/>
+            </apex:pageBlockSection>
+            <!-- Save button -->
+            <apex:commandButton value="Save Book" action="{!saveBook}"/>
+        </apex:pageBlock>
+
+        <!-- Display existing books -->
+        <apex:pageBlock title="Existing Books">
+            <apex:pageBlockTable value="{!books}" var="book">
+                <apex:column value="{!book.Title__c}" headerValue="Book Title"/>
+                <apex:column value="{!book.Author__c}" headerValue="Author"/>
+                <apex:column value="{!book.Publication_Year__c}" headerValue="Publication Year"/>
+                <apex:column>
+                    <!-- Update button for each book -->
+                    <apex:commandButton value="Update" action="{!updateBook}" />
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
