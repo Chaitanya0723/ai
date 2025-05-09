@@ -1,0 +1,82 @@
+public class Calculator {
+    public Double val1 { get; set; }
+    public Double val2 { get; set; }
+    public String result { get; set; }  // result as String to accommodate both number and error message
+    public String func { get; set; }
+
+    public Calculator() {
+        val1 = 0;
+        val2 = 0;
+        result = '0';  // Initialize result as String
+        func = 'add';
+    }
+
+    public List<SelectOption> getOperations() {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('add', 'Addition (+)'));
+        options.add(new SelectOption('sub', 'Subtraction (-)'));
+        options.add(new SelectOption('mul', 'Multiplication (×)'));
+        options.add(new SelectOption('div', 'Division (/)'));
+        options.add(new SelectOption('mod', 'Modulo (%)'));
+        return options;
+    }
+
+    public void finds() {
+        if (func == 'add') {
+            result = String.valueOf(val1 + val2);  // Ensure result is String
+        } else if (func == 'sub') {
+            result = String.valueOf(val1 - val2);
+        } else if (func == 'mul') {
+            result = String.valueOf(val1 * val2);
+        } else if (func == 'div') {
+            if (val2 == 0) {
+                result = 'Error';  // Set result to 'Error' if division by zero occurs
+                return;
+            }
+            result = String.valueOf(val1 / val2);
+        } else if (func == 'mod') {
+            if (val2 == 0) {
+                result = 'Error';  // Set result to 'Error' if modulo by zero occurs
+                return;
+            }
+            Integer temp = Math.mod(Integer.valueOf(val1), Integer.valueOf(val2));
+            result = String.valueOf(temp);
+        } else {
+            result = 'Error';  // Invalid operation
+        }
+    }
+}
+
+
+#Apex
+
+<apex:page controller="Calculator">
+    <apex:form >
+        <apex:pageBlock title="Simple Calculator">
+            <apex:pageBlockSection columns="2">
+                <apex:inputText value="{!val1}" label="First Number" />
+                <apex:inputText value="{!val2}" label="Second Number" />
+                
+                <apex:selectList value="{!func}" size="1" label="Select Operation">
+                    <apex:selectOptions value="{!operations}" />
+                </apex:selectList>
+
+                <apex:commandButton value="Calculate" action="{!finds}" rerender="resultBlock"/>
+            </apex:pageBlockSection>
+
+            <apex:outputPanel id="resultBlock">
+                <apex:pageBlockSection title="Result">
+                    <apex:outputText value="Result: {!result}" style="font-weight:bold; font-size:16px;"/>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+    
+    <script type="text/javascript">
+        window.onload = function() {
+            if ( {!val2} == 0) {          
+                alert('Division by zero is not allowed.');
+            }
+        };
+    </script>
+</apex:page>
